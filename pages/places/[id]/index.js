@@ -5,6 +5,7 @@ import Comments from "../../../components/Comments";
 import { StyledLink } from "../../../components/StyledLink";
 import { StyledButton } from "../../../components/StyledButton";
 import { StyledImage } from "../../../components/StyledImage";
+import { mutate } from "swr";
 
 const ImageContainer = styled.div`
   position: relative;
@@ -40,7 +41,14 @@ export default function DetailsPage() {
   if (!isReady || isLoading || error) return <h2>Loading...</h2>;
 
   async function deletePlace() {
-    console.log("Deleting place ...");
+    const response = await fetch(`/api/places/${id}`, {
+      method: 'DELETE'
+    })
+
+    if (response.ok) {
+      mutate()
+      router.push('/')
+    }
   }
 
   return (
@@ -62,7 +70,7 @@ export default function DetailsPage() {
       <h2>
         {place.name}, {place.location}
       </h2>
-      <StyledLocationLink href={place.mapURL}>
+      <StyledLocationLink target="_blank" href={place.mapURL}>
         Location on Google Maps
       </StyledLocationLink>
       <p>{place.description}</p>
